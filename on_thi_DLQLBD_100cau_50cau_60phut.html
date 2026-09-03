@@ -66,6 +66,10 @@ body{font-family:'Roboto',sans-serif;background:#f1f5f9}
     <h2 class="font-black text-lg mb-1">Luyện đề ngẫu nhiên 100 câu</h2>
     <p class="text-xs text-slate-500 mb-4">Đủ toàn bộ 100 câu nhưng thứ tự câu hỏi và thứ tự phương án được đảo ngẫu nhiên. Mỗi lần bấm tạo đề, hệ thống tạo thứ tự mới khác lượt trước.</p>
     <button onclick="startQuiz('random100')" class="p-5 rounded-xl border-2 border-indigo-400 bg-indigo-50 text-indigo-900 font-black text-lg">🎲 TẠO ĐỀ 100 CÂU NGẪU NHIÊN</button>
+    <div class="mt-4 bg-slate-50 rounded-xl border p-4">
+      <div class="flex justify-between mb-2"><b class="text-sm">Lịch sử luyện đề 100 câu trên thiết bị</b><button onclick="clearQuizHistory('random100')" class="text-xs text-rose-600 font-bold">Xóa lịch sử</button></div>
+      <div id="random100History" class="space-y-2 max-h-56 overflow-auto"></div>
+    </div>
   </div>
   <div id="random100Active" class="hidden"></div>
   <div id="random100Result" class="hidden"></div>
@@ -77,6 +81,10 @@ body{font-family:'Roboto',sans-serif;background:#f1f5f9}
     <h2 class="font-black text-lg mb-1">Đề thi Thông tư 143</h2>
     <p class="text-xs text-slate-500 mb-4">Đã lọc riêng <b>41 câu</b> có nội dung thuộc Thông tư số 143 để ôn đi ôn lại. Thứ tự câu và phương án được đảo sau mỗi lần tạo đề.</p>
     <button onclick="startQuiz('tt143')" class="p-5 rounded-xl border-2 border-rose-400 bg-rose-50 text-rose-900 font-black text-lg">📌 TẠO ĐỀ THÔNG TƯ 143 MỚI</button>
+    <div class="mt-4 bg-slate-50 rounded-xl border p-4">
+      <div class="flex justify-between mb-2"><b class="text-sm">Lịch sử đề Thông tư 143 trên thiết bị</b><button onclick="clearQuizHistory('tt143')" class="text-xs text-rose-600 font-bold">Xóa lịch sử</button></div>
+      <div id="tt143History" class="space-y-2 max-h-56 overflow-auto"></div>
+    </div>
   </div>
   <div id="tt143Active" class="hidden"></div>
   <div id="tt143Result" class="hidden"></div>
@@ -267,6 +275,7 @@ function submitQuiz(type){
   if(!confirm(`Nộp bài? Đã làm ${Object.keys(s.answers).length}/${total} câu.`))return;
   const correct=s.questions.filter((q,i)=>s.answers[i]===q.answer).length;
   const percent=Math.round(correct/total*100);
+  saveQuizHistory(type,correct,total,percent);
   $(type+'Active').classList.add('hidden');
   const r=$(type+'Result');r.classList.remove('hidden');
   r.className='bg-white rounded-xl border shadow-sm p-6';
@@ -277,6 +286,34 @@ function submitQuiz(type){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function resetQuiz(type){$(type+'Result').classList.add('hidden');$(type+'Home').classList.remove('hidden');startQuiz(type)}
+
+function quizHistoryKey(type){
+  return type==='random100'?'dlqlbd_history_random100_v1':'dlqlbd_history_tt143_v1';
+}
+function quizHistoryElement(type){
+  return type==='random100'?'random100History':'tt143History';
+}
+function saveQuizHistory(type,score,total,percent){
+  const key=quizHistoryKey(type);
+  let h=JSON.parse(localStorage.getItem(key)||'[]');
+  h.unshift({date:new Date().toLocaleString('vi-VN'),score,total,percent});
+  localStorage.setItem(key,JSON.stringify(h.slice(0,50)));
+  renderQuizHistory(type);
+}
+function renderQuizHistory(type){
+  const el=$(quizHistoryElement(type));
+  if(!el)return;
+  const h=JSON.parse(localStorage.getItem(quizHistoryKey(type))||'[]');
+  el.innerHTML=h.length
+    ? h.map(x=>`<div class="bg-white border rounded-lg p-2 text-xs flex justify-between gap-2"><span>${x.date}</span><b class="text-emerald-700">${x.score}/${x.total} • ${x.percent}%</b></div>`).join('')
+    : '<div class="text-xs text-slate-400">Chưa có lượt thi nào.</div>';
+}
+function clearQuizHistory(type){
+  if(confirm('Xóa lịch sử của phần này?')){
+    localStorage.removeItem(quizHistoryKey(type));
+    renderQuizHistory(type);
+  }
+}
 
 /* Thi thật 50 câu: đúng 15 TT143 + 35 câu khác */
 function startExam(){
@@ -333,8 +370,10 @@ function switchMode(m){
   const tabs={practice:'tabPractice',random100:'tabRandom100',tt143:'tabTT143',exam:'tabExam'};
   Object.entries(tabs).forEach(([k,id])=>$(id).className='tabbtn py-3 px-4 font-bold text-sm border-b-2 '+(k===m?'border-emerald-600 text-emerald-700':'border-transparent text-slate-500'));
   if(m==='exam')renderHistory();
+  if(m==='random100')renderQuizHistory('random100');
+  if(m==='tt143')renderQuizHistory('tt143');
 }
-window.onload=()=>{renderPractice();renderHistory()};
+window.onload=()=>{renderPractice();renderHistory();renderQuizHistory('random100');renderQuizHistory('tt143')};
 </script>
 </body>
 </html>
