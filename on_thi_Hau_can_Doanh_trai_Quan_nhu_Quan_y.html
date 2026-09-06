@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ôn thi Hậu cần Online</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Roboto',sans-serif;background:#f1f5f9}
+.custom-scrollbar::-webkit-scrollbar{width:6px;height:6px}
+.custom-scrollbar::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
+.tabbtn{white-space:nowrap}
+.opt{transition:.15s}
+</style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+<header class="bg-gradient-to-r from-emerald-900 via-green-800 to-teal-900 text-white shadow-md sticky top-0 z-30">
+  <div class="max-w-7xl mx-auto px-3 py-2 flex flex-wrap justify-between border-b border-emerald-600/40 text-xs sm:text-sm">
+    <div class="font-bold tracking-wide text-amber-300"><i class="fa-solid fa-book-open mr-2"></i>ÔN TẬP HẬU CẦN</div>
+    <div class="text-emerald-100 font-medium">Doanh trại • Quân nhu • Quân y</div>
+  </div>
+  <div class="max-w-7xl mx-auto px-3 py-3 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <div class="bg-white text-emerald-800 p-2 rounded-xl w-10 h-10 flex items-center justify-center text-xl"><i class="fa-solid fa-star"></i></div>
+      <div><h1 class="font-black uppercase tracking-wider">ÔN THI HẬU CẦN ONLINE</h1></div>
+    </div>
+    <button onclick="goHome()" class="bg-emerald-950/70 hover:bg-emerald-950 px-3 py-2 rounded-lg text-xs font-bold"><i class="fa-solid fa-house mr-1"></i>Trang chủ</button>
+  </div>
+</header>
+
+<nav class="bg-white border-b sticky top-[89px] z-20 overflow-x-auto custom-scrollbar">
+  <div class="max-w-7xl mx-auto px-2 flex gap-2 min-w-max">
+    <button id="tabDoanh" onclick="switchTab('doanh')" class="tabbtn py-3 px-4 font-bold text-sm border-b-2 border-emerald-600 text-emerald-700">🏢 DOANH TRẠI</button>
+    <button id="tabNhu" onclick="switchTab('nhu')" class="tabbtn py-3 px-4 font-bold text-sm border-b-2 border-transparent text-slate-500">🍚 QUÂN NHU</button>
+    <button id="tabY" onclick="switchTab('y')" class="tabbtn py-3 px-4 font-bold text-sm border-b-2 border-transparent text-slate-500">🩺 QUÂN Y</button>
+    <button id="tabRandom" onclick="switchTab('random')" class="tabbtn py-3 px-4 font-bold text-sm border-b-2 border-transparent text-slate-500">🎲 ĐỀ NGẪU NHIÊN</button>
+  </div>
+</nav>
+
+<main class="flex-grow max-w-7xl w-full mx-auto p-2 sm:p-4 md:p-6">
+  <section id="doanhSec"></section>
+  <section id="nhuSec" class="hidden"></section>
+  <section id="ySec" class="hidden"></section>
+  <section id="randomSec" class="hidden"></section>
+</main>
+
+<footer class="bg-slate-900 text-slate-400 text-xs py-4 text-center mt-8">Ôn thi Hậu cần • Doanh trại • Quân nhu • Quân y</footer>
+
+<script>
+const DATA={"Doanh trại":[{"id":"doanh_trại_1","label":"1","q":"Theo Nghị định số 02/2026/NĐ-CP, định mức sử dụng nước sạch áp dụng cho địa bàn có nguồn nước sạch là","options":["140-160l/người/ngày","180-200l/người/ngày","200-220l/người/ngày","240-260l/người/ngày"],"answer":"C","section":"Doanh trại"},{"id":"doanh_trại_2","label":"2","q":"Theo Nghị định số 02/2026/NĐ-CP, một bộ dụng cụ sinh hoạt gồm:","options":["01 xô đựng, 01 chậu giặt, 01 chậu rửa mặt","02 xô đựng, 01 chậu giặt, 02 chậu rửa mặt","01 xô đựng, 02 chậu giặt, 02 chậu rửa mặt","02 xô đựng, 02 chậu giặt, 02 chậu rửa mặt"],"answer":"D","section":"Doanh trại"},{"id":"doanh_trại_3","label":"3","q":"Theo Nghị định số 02/2026/NĐ-CP, điện năng sử dụng cho đào tạo bao gồm:","options":["Bảo đảm cho hoạt động các thiết bị phục vụ đào tạo, nghiên cứu và huấn luyện đồng bộ trong phòng học, giảng đường, phòng thí nghiệm, phòng điều hành, thư viện, xưởng in, xưởng thực tập tại các học viện, nhà trường trong quân đội.","Bảo quản, bảo dưỡng, sữa chữa vũ khí, trang thiết bị phục vụ cho giảng dạy, học tập, nghiên cứu, luyện tập.","Cả A và B đều sai","Cả A và B"],"answer":"A","section":"Doanh trại"},{"id":"doanh_trại_4","label":"4","q":"Theo Nghị định số 02/2026/NĐ-CP, tiêu chuẩn diện tích ở đối với chỉ huy đại đội, trung đội và tương đương; sĩ quan giữ chức vụ có cấp bậc quân hàm là cấp úy","options":["12m2/người","24m2/người","15m2/người","18m2/người"],"answer":"A","section":"Doanh trại"},{"id":"doanh_trại_5","label":"5","q":"Theo Nghị định số 02/2026/NĐ-CP, trang bị máy điều hòa phòng làm việc được áp dụng từ cấp nào trở lên","options":["Cơ quan trung đoàn và tương đương trở lên","Chỉ huy tiểu đoàn, cơ quan trung đoàn và tương đương trở lên","Chỉ huy đại đội, cơ quan trung đoàn và tương đương trở lên","Cơ quan sư đoàn và tương đương trở lên"],"answer":"B","section":"Doanh trại"},{"id":"doanh_trại_6","label":"6","q":"Theo Nghị định số 02/2026/NĐ-CP, phòng họp, phòng giao ban từ cấp nào trở lên được trang bị máy điều hòa","options":["Đại đội trở lên","Tiểu đoàn và tương đương trở lên","Trung đoàn và tương đương trở lên","Sư đoàn và tương đương trở lên"],"answer":"B","section":"Doanh trại"},{"id":"doanh_trại_7","label":"7","q":"Theo Nghị định số 02/2026/NĐ-CP, định mức sử dụng điện năng sinh hoạt, làm việc hạ sĩ quan, binh sĩ, thiếu sinh quân, học sinh năng khiếu là bao nhiêu","options":["10kWh/người/tháng","12kWh/người/tháng","24kWh/người/tháng","20kWh/người/tháng"],"answer":"C","section":"Doanh trại"},{"id":"doanh_trại_8","label":"8","q":"Theo Nghị định số 02/2026/NĐ-CP, điện năng sử dụng cho sử dụng cho sinh hoạt và làm việc gồm","options":["Chiếu sáng; làm mát tại phòng ở, phòng làm việc, các công trình công cộng và một số công trình phụ trợ khác trong doanh trại phục vụ cho sinh hoạt và làm việc.","Sử dụng cho hoạt động của các thiết bị nghe nhìn: Tivi, radio, tăng âm, hệ thống âm thanh, thiết bị trình chiếu,…(được trang bị theo quy định của Bộ Quốc phòng về tiêu chuẩn đời sống văn hóa tinh thần) để phục vụ sinh hoạt chính trị, văn hóa, tinh thần các đối tượng.","Sử dụng cho hoạt động của các máy móc, thiết bị vặn phòng được trang bị theo quy định phục vụ làm việc","Cả 3 đáp án trên"],"answer":"D","section":"Doanh trại"},{"id":"doanh_trại_9","label":"9","q":"Theo Quy định số 442/QyĐ-CĐHC của Trường Cao đẳng Hậu cần 1 về Quản lý, sử dụng tiết kiệm điện, nước hành vi đun, nấu, tự ý câu móc điện, nước khi chưa có ý kiến của cơ quan chức năng và Thủ trưởng Nhà trường có bị nghiêm cấm không?","options":["Không bị nghiêm cấm","Bị nghiêm cấm","Chỉ cấm khi bị phát hiện","Không bị nghiêm cấm nếu đảm bảo an toàn"],"answer":"B","section":"Doanh trại"},{"id":"doanh_trại_10","label":"10","q":"Theo Quy định số 442/QyĐ-CĐHC của Trường Cao đẳng Hậu cần 1 về Quản lý, sử dụng tiết kiệm điện, nước; đối với khu nhà ở học viên, hành vi nào sau đây bị nghiêm cấm","options":["Tự ý đun, nấu tại các phòng ở","Sử dụng các thiết bị sai quy định, công suất tiêu thụ lớn có nguy cơ mất an toàn như: Thiết bị sưởi, bàn là, sục đun nước,…","Tự ý câu móc điện, nước mà chưa được sự đồng ý của cơ quan chức năng và Thủ trưởng Nhà trường","Cả 3 đáp án trên"],"answer":"D","section":"Doanh trại"},{"id":"doanh_trại_11","label":"11","q":"Theo Nghị định số 02/2026/NĐ-CP, tiêu chuẩn diện tích làm việc đối với sĩ quan không giữ chức vụ","options":["15m2/người","13-15m2/người","08-12m2/người","15-17m2/người"],"answer":"C","section":"Doanh trại"},{"id":"doanh_trại_12","label":"12","q":"Theo Nghị định số 02/2026/NĐ-CP, tiêu chuẩn doanh cụ sử dụng trong nhà ở đối với hạ sĩ quan, binh sĩ, thiếu sinh quân, học sinh năng khiếu","options":["01 giường","01 giường, 01 ghế tựa","01 giường, 02 ghế tựa","02 giường"],"answer":"A","section":"Doanh trại"},{"id":"doanh_trại_13","label":"13","q":"Theo Nghị định số 02/2026/NĐ-CP, tiêu chuẩn doanh cụ sử dụng trong nhà ở đối với cấp úy không giữ chức vụ","options":["01 giường, 01 bộ bàn ghế uống nước/2 người","01 giường, 01 bộ bàn ghế uống nước/4 người","01 giường, 01 bộ bàn ghế uống nước/3 người","01 giường, 01 bộ bàn ghế uống nước/5 người"],"answer":"C","section":"Doanh trại"},{"id":"doanh_trại_14","label":"14","q":"Theo Nghị định số 02/2026/NĐ-CP, tiêu chuẩn doanh cụ sử dụng trong nhà ở đối với chỉ huy đại đội, trung đội và tương đương; sĩ quan giữ chức vụ có cấp bậc quân hàm là cấp úy","options":["01 giường, 01 bộ bàn ghế uống nước","01 giường, 02 bộ bàn ghế uống nước, 01 tủ áo","01 giường, 01 bộ bàn ghế uống nước, 02 tủ áo","01 giường, 01 bộ bàn ghế uống nước, 01 tủ áo"],"answer":"D","section":"Doanh trại"},{"id":"doanh_trại_15","label":"15","q":"Theo Nghị định số 02/2026/NĐ-CP, tiêu chuẩn doanh cụ sử dụng trong nhà ở đối với chỉ huy tiểu đoàn và tương đương; sĩ quan giữ chức vụ có cấp bậc quân hàm cao nhất là Trung tá, thiếu tá","options":["01 giường, 01 bộ bàn ghế uống nước","01 giường, 02 bộ bàn ghế uống nước, 01 tủ áo","01 giường, 01 bộ bàn ghế uống nước, 01 tủ áo","01 giường, 01 bộ bàn ghế uống nước, 02 tủ áo"],"answer":"C","section":"Doanh trại"}],"Quân nhu":[{"id":"quân_nhu_1","label":"1","q":"Đồng chí cho biết chỉ tiêu phấn đấu thu lãi từ TGSX và dịch vụ kinh tế hậu cần đúng pháp luật theo Kế hoạch công tác hậu cần năm 2026 của Nhà trường là?","options":["1.500.000 đồng/người/năm.","1.550.000 đồng/người/năm.","1.600.000 đồng/người/năm","1.700.000 đồng/người/năm"],"answer":"C","section":"Quân nhu"},{"id":"quân_nhu_2","label":"2","q":"Điều lệnh QLBĐ24/2026 quy định việc tổ chức kiểm tra quân trang của người chỉ huy các cấp?","options":["Trung đội trưởng và tương đương 1 tháng/1 lần; Đại đội trưởng và tương đương 2 tháng/1 lần; Tiểu đoàn trưởng và tương đương 6 tháng/1 lần; Trung đoàn trưởng và tương đương 1 năm/1 lần.","Trung đội trưởng và tương đương 1 quý/1 lần; Đại đội trưởng và tương đương 6 tháng/1 lần; Tiểu đoàn trưởng và tương đương 1 năm/1 lần; Trung đoàn trưởng và tương đương kiểm tra đột xuất.","Trung đội trưởng và tương đương 1 tháng/1 lần; Đại đội trưởng và tương đương 1 quý/1 lần; Tiểu đoàn trưởng và tương đương 6 tháng/1 lần; Trung đoàn trưởng và tương đương 1 năm/1 lần.","Trung đội trưởng và tương đương 1 tháng/1 lần; Đại đội trưởng và tương đương 2 tháng/1 lần; Tiểu đoàn trưởng và tương đương 1 quý/1 lần; Trung đoàn trưởng và tương đương kiểm tra đột xuất."],"answer":"C","section":"Quân nhu"},{"id":"quân_nhu_3","label":"3","q":"Điều lệnh QLBĐ24/2026, quy định thời gian tổ chức tăng gia, sản xuất?","options":["Hàng ngày sau giờ lau vũ khí, trang bị, các đơn vị phải tổ chức tập thể thao và tăng gia sản xuất cải thiện đời sống. Thời gian từ 40 đến 45 phút.","Hàng ngày (trừ ngày nghỉ) sau giờ lau vũ khí, trang bị, các đơn vị phải tổ chức tập thể thao và tăng gia sản xuất cải thiện đời sống. Thời gian từ 30 đến 45 phút.","Hàng ngày (trừ ngày nghỉ) sau giờ lau vũ khí, trang bị, các đơn vị phải tổ chức tập thể thao và tăng gia sản xuất cải thiện đời sống. Thời gian từ 45 đến 60 phút.","Hàng ngày sau giờ lau vũ khí, trang bị, các đơn vị phải tổ chức tập thể thao và tăng gia sản xuất cải thiện đời sống. Thời gian từ 30 đến 45 phút."],"answer":"A","section":"Quân nhu"},{"id":"quân_nhu_4","label":"4","q":"Đồng chí cho biết mức tiền ăn cơ bản của bộ binh theo Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của BQP là bao nhiêu?","options":["68.000 đồng/người/ngày.","72.000 đồng/người/ngày","75.000 đồng/người/ngày.","80.000 đồng/người/ngày."],"answer":"B","section":"Quân nhu"},{"id":"quân_nhu_5","label":"5","q":"Đồng chí cho biết định lượng ăn tiêu chuẩn bộ binh đối gạo tẻ theo Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng là bao nhiêu?","options":["680 Gam/người/ngày.","650 Gam/người/ngày.","700 Gam/người/ngày.","720 Gam/người/ngày."],"answer":"A","section":"Quân nhu"},{"id":"quân_nhu_6","label":"6","q":"Đồng chí cho biết tiêu chuẩn ăn thêm các ngày lễ, tết theo Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng?","options":["Mỗi quân nhân được hưởng chế độ ăn thêm 10 ngày.","Mỗi quân nhân được hưởng chế độ ăn thêm 11 ngày.","Mỗi quân nhân được hưởng chế độ ăn thêm 12 ngày.","Mỗi quân nhân được hưởng chế độ ăn thêm 13 ngày."],"answer":"C","section":"Quân nhu"},{"id":"quân_nhu_7","label":"7","q":"Đồng chí cho biết đâu là tên gọi phong trào thi đua ngành quân nhu?","options":["Xây dựng đơn vị nuôi quân giỏi, quản lý quân nhu tốt.","Xây dựng đơn vị nuôi quân giỏi, quản lý quân trang tốt.","Xây dựng đơn vị nuôi quân giỏi, quản lý quân lương tốt.","Xây dựng đơn vị nuôi quân giỏi; quản lý quân nhu tốt; sử dụng trang thiết bị, DCCD bền, tiết kiệm."],"answer":"A","section":"Quân nhu"},{"id":"quân_nhu_8","label":"8","q":"Đồng chí cho biết theo Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng, mức tiền ăn them các ngày lê, tết là","options":["80.000 đồng/người/ngày.","72.000 đồng/người/ngày.","108.000 đồng/người/ngày.","110.000 đồng/người/ngày"],"answer":"C","section":"Quân nhu"},{"id":"quân_nhu_9","label":"9","q":"Đồng chí cho biết theo Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng, chế độ bánh chưng tết Nguyên đán được hưởng là bao nhiêu?","options":["3 chiếc/người; riêng lực lượng ở quần đảo Trường Sa, Nhà giàn DK, vùng thềm lục địa phía Bắc, phía Nam, bãi cạn Cà Mau và những nơi có phụ cấp đặc biệt mức 100% được hưởng 04 chiếc/người.","3 chiếc/người; riêng lực lượng ở quần đảo Trường Sa, Nhà giàn DK, vùng thềm lục địa phía Bắc, phía Nam, bãi cạn Cà Mau và những nơi có phụ cấp đặc biệt mức 100% được hưởng 05 chiếc/người.","5 chiếc/người; riêng lực lượng ở quần đảo Trường Sa, Nhà giàn DK, vùng thềm lục địa phía Bắc, phía Nam, bãi cạn Cà Mau và những nơi có phụ cấp đặc biệt mức 100% được hưởng 06 chiếc/người.","5 chiếc/người; riêng lực lượng ở quần đảo Trường Sa, Nhà giàn DK, vùng thềm lục địa phía Bắc, phía Nam, bãi cạn Cà Mau và những nơi có phụ cấp đặc biệt mức 100% được hưởng 07 chiếc/người."],"answer":"C","section":"Quân nhu"},{"id":"quân_nhu_10","label":"10","q":"Đối tượng áp dụng theo Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng quy định tiêu chuẩn định lượng ăn và mức tiền ăn cơ bản bộ binh, quân chủng, binh chủng, bệnh nhân điều trị, học viên quân sự quốc tế; ăn thêm ngày lễ,tết, khi làm nhiệm vụ; chế độ an bồi dưỡng hàng năm?","options":["Sĩ quan, quân nhân chuyên nghiệp, HSQ-BS, học viên quân sự quốc tế trong thời gian học tập, tập huấn, bồi dưỡng tại các cơ sở đào tạo của BQP.","Công chức quốc phòng, công nhân quốc phòng và viên chức quốc phòng; các cơ quan, đơn vị, tổ chức và cá nhân có liên quan.","Công chức quốc phòng, công nhân quốc phòng và viên chức quốc phòng đang hưởng lương, phụ cấp từ nguồn ngân sách nhà nước trong BQP.","Tất cả đáp án trên."],"answer":"D","section":"Quân nhu"},{"id":"quân_nhu_11","label":"11","q":"Đồng chí cho biết mức tiền ăn cơ bản của bộ binh theo Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng thống nhất giá gạo tẻ loại trung bình là bao nhiêu?","options":["16.000 đồng/người/ngày.","16.500 đồng/người/ngày.","17.000 đồng/người/ngày.","17.500 đồng/người/ngày."],"answer":"A","section":"Quân nhu"},{"id":"quân_nhu_12","label":"12","q":"Đồng chí cho biết theo Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng, Tết Nguyên đán được tính bao nhiêu ngày trong tổng số ngày được hưởng chế độ ăn thêm?","options":["2 ngày.","3 ngày.","4 ngày.","5 ngày."],"answer":"D","section":"Quân nhu"},{"id":"quân_nhu_13","label":"12","q":"Đồng chí cho biết theo Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng quy định nội dung nào sau đây?","options":["Chế độ quân trang của quân nhân.","Tiêu chuẩn Nhà công vụ.","Tiêu chuẩn, định lượng ăn và mức tiền ăn cơ bản bộ binh, quân chủng, binh chủng, bệnh nhân điều trị, học viên quân sự quốc tế; ăn thêm ngày lễ, tết, khi làm nhiệm vụ; chế độ an bồi dưỡng hàng năm của các đối tượng hưởng lương và phụ cấp từ nguồn ngân sách Nhà nước thuộc các cơ quan, đơn vị trong Bộ Quốc phòng.","Tất cả đáp án trên"],"answer":"C","section":"Quân nhu"},{"id":"quân_nhu_14","label":"13","q":"Khi xây dựng kế hoạch tiền ăn cho quân nhân hưởng tiêu chuẩn ăn cơ bản bộ binh, căn cứ mức 65.000 đồng/người/ngày của quy định trước đây có còn phù hợp với Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng hay không?","options":["Có.","Không.","Chỉ được áp dụng với sĩ quan.","Chỉ được áp dụng trong huấn luyện."],"answer":"B","section":"Quân nhu"},{"id":"quân_nhu_15","label":"14","q":"Đồng chí cho biết theo Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng, nếu đơn vị mua gạo cao hơn mức giá gạo được quy định làm căn cứ thì đối với hạ sĩ quan, binh sĩ, tiền bù giá gạo được xử lý như nào:","options":["Tự chịu chênh lệch.","Giảm thực phẩm.","Phần chênh lệch được quyết toán theo quy định.","Không được mua."],"answer":"C","section":"Quân nhu"},{"id":"quân_nhu_16","label":"15","q":"Đồng chí cho theo Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng, nếu đơn vị mua gạo giá thấp hơn mức giá gạo được quy định thì phần tiền chênh lệch giá gạo được sử dụng như nào?","options":["Nộp lại toàn bộ.","Thanh toán lại cho bộ đội.","Bổ sung mua thực phẩm bảo đảm cho bộ đội.","Cả 2 phương án B và C."],"answer":"C","section":"Quân nhu"},{"id":"quân_nhu_17","label":"16","q":"Nội dung bảo đảm của Công tác quân nhu là?","options":["Bảo đảm quân lương, trang thiết bị quân lương; nhu yếu phẩm.","Bảo đảm quân trang, trang thiết bị quân trang.","Bảo đảm vốn, thiết bị, vật tư sản xuất.","Tất cả đáp án trên"],"answer":"D","section":"Quân nhu"},{"id":"quân_nhu_18","label":"17","q":"Đối tượng nào không được áp dụng Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng?","options":["Sĩ quan, quân nhân chuyên nghiệp, hạ sĩ quan, binh sĩ.","Học viên quân sự quốc tế trong thời gian học tập, tập huấn, bồi dưỡng tại các cơ sở đào tạo của Bộ Quốc phòng.","Học viên đào tạo dân sự tại các trường Quân đội.","Học sinh năng khiếu trong thời gian học tập, tập huấn, bồi dưỡng tại các cơ sở đào tạo của Bộ Quốc phòng."],"answer":"C","section":"Quân nhu"},{"id":"quân_nhu_19","label":"18","q":"Căn cứ Văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng, đồng chí cho biết ngày nào sau đây không được hưởng chế độ ăn thêm ngày lễ, tết?","options":["Ngày Giỗ tổ Hùng Vương 10/3 ÂL.","Ngày Ngày truyền thống ngành Hậu cần Quân đội 11/7.","Ngày Quốc tế Lao động 01/5.","Ngày thành lập Quân đội nhân dân Việt Nam 22/12."],"answer":"B","section":"Quân nhu"},{"id":"quân_nhu_20","label":"19","q":"Đồng chí cho biết, theo văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng, mức tiền ăn thêm khi ốm đau được điều trị tại tổ Quân y có giường lưu, ốm tại trại là bao nhiêu?","options":["15.000 đồng.","20.000 đồng.","22.000 đồng.","25.000 đồng."],"answer":"C","section":"Quân nhu"},{"id":"quân_nhu_21","label":"20","q":"Đồng chí cho biết, theo văn bản số 50/VBHN-BQP ngày 05/6/2026 xác thực văn bản hợp nhất Thông tư 96/2025/TT-BQP và Thông tư 41/2026/TT-BQP của Bộ Quốc phòng, mức tiền 01 túi quà tết Nguyên đán cho hạ sĩ quan, binh sĩ khi xuất ngũ là bao nhiêu?","options":["600.000 đồng.","650.000 đồng.","700.000 đồng.","720.000 đồng."],"answer":"D","section":"Quân nhu"}],"Quân y":[{"id":"quân_y_1","label":"1","q":"Chỉ thị số 79/CT-BQP ngày 22/7/2022 của Bộ Quốc phòng xác định tỷ lệ quân số khỏe phải đạt bao nhiêu % trở lên?","options":["98,4% trở lên.","98,5% trở lên.","98,6% trở lên.","99,5% trở lên."],"answer":"B","section":"Quân y"},{"id":"quân_y_2","label":"2","q":"Quy trình “ Kiểm thực 3 bước” trong bếp ăn đơn vị Quân đội được thực hiện vào thời điểm nào?","options":["Trước khi chế biến, trong khi chế biến và sau khi ăn.","Trước khi chế biến, trong khi chế biến và trước khi ăn.","Sau khi ăn xong và dọn dẹp vệ sinh.","Khi có đoàn kiểm tra của cấp trên xuống đơn vị."],"answer":"B","section":"Quân y"},{"id":"quân_y_3","label":"3","q":"Thức ăn nấu chín trong ngày tại bếp ăn đơn vị Quân đội phải được lưu mẫu trong thời gian tối thiểu bao lâu?","options":["Ít nhất 12 giờ.","Ít nhất 24 giờ.","Ít nhất 48 giờ.","Đến khi kết thúc ngày làm việc."],"answer":"B","section":"Quân y"},{"id":"quân_y_4","label":"4","q":"Người trực tiếp chế biến, phục vụ ăn uống trong bếp ăn đơn vị Quân đội có bắt buộc phải mặc trang phục bảo hộ riêng (mũ, tạp dề) và khám sức khỏe định kỳ không?","options":["Có.","Không."],"answer":"A","section":"Quân y"},{"id":"quân_y_5","label":"5","q":"Nguyên nhân trực tiếp gây ra tình trạng say nắng (khác với say nóng thuần túy) cho bộ đội ngoài thao trường là gì?","options":["Làm việc trong hầm lò hoặc kho tàng kín gió.","Bức xạ mặt trời chiếu thẳng trực tiếp vào vùng cổ, gáy.","Mặc quần áo quân phục quá dày vào mùa đông.","Uống quá nhiều nước lạnh khi đang đói."],"answer":"B","section":"Quân y"},{"id":"quân_y_6","label":"6","q":"Biểu hiện nặng và nguy hiểm nhất (dấu hiệu sốc nhiệt) của quân nhân bị say nắng, say nóng là gì?","options":["Thân nhiệt tăng cao trên 40 độ C, rối loạn ý thức, mê sảng hoặc hôn mê.","Chỉ thấy hơi mệt mỏi và khát nước nhẹ.","Vã mồ hôi nhiều và da dẻ hồng hào.","Chân tay lạnh ngắt nhưng tỉnh táo hoàn toàn."],"answer":"A","section":"Quân y"},{"id":"quân_y_7","label":"7","q":"Cấp cứu say nắng, say nóng tại hiện trường gồm mấy bước?","options":["4 bước.","5 bước.","6 bước.","7 bước."],"answer":"C","section":"Quân y"},{"id":"quân_y_8","label":"8","q":"Khi phát hiện đồng chí của mình có biểu hiện bị say nắng, say nóng trên thao trường, động tác cấp cứu đầu tiên và quan trọng nhất là gì?","options":["Lập tức cho uống thuốc hạ sốt chứa Paracetamol.","Nhanh chóng đưa nạn nhân ra khỏi nơi nắng nóng vào bóng râm, thoáng gió.","Giữ nguyên vị trí nắm và chờ quân y tuyến sau đến.","Ép tim ngoài lồng ngực ngay lập tức dù nạn nhân chưa ngừng tim."],"answer":"B","section":"Quân y"},{"id":"quân_y_9","label":"9","q":"Trong sơ cứu say nắng, say nóng theo hướng dẫn quân y, hành động nào sau đây không được phép thực hiện?","options":["Cởi bớt quần áo và quạt mát cho nạn nhân.","Chườm mát bằng khăn ướt ở các vị trí nhiều mạch máu lớn (cổ, nách, bẹn).","Lập tức cho uống nước lọc hoặc dung dịch oresol bù điện giải.","Đắp chăn dày để giữ ấm cơ thể."],"answer":"D","section":"Quân y"},{"id":"quân_y_10","label":"10","q":"Để phòng, chống say nắng, say nóng cho chiến sĩ (đặc biệt là chiến sĩ mới) trong mùa huấn luyện, chỉ huy đơn vị cần làm gì?","options":["Tổ chức luyện tập cường độ cao ngay từ ngày đầu tiên dưới trời nắng gắt","Điều chỉnh thời gian huấn luyện linh hoạt, tránh giờ nắng nóng cao điểm và cho bộ đội nghỉ ngơi hợp lý","Cấm quân nhân uống nước trong giờ giải lao trên thao trường","Đóng kín cửa phòng ở để tránh hơi nóng ngoài trời lùa vào"],"answer":"B","section":"Quân y"}]};
+const LETTERS='ABCDE';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SECTION_MAP={
+  doanh:{name:'Doanh trại',key:'Doanh trại',icon:'🏢'},
+  nhu:{name:'Quân nhu',key:'Quân nhu',icon:'🍚'},
+  y:{name:'Quân y',key:'Quân y',icon:'🩺'}
+};
+const ALL=[...DATA['Doanh trại'],...DATA['Quân nhu'],...DATA['Quân y']];
+
+let state={};
+function goHome(){window.location.href='index.html'}
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function shuffleOptions(q){
+  const correctIndex=LETTERS.indexOf(q.answer);
+  const packed=q.options.map((text,i)=>({text,correct:i===correctIndex}));
+  const mixed=shuffle(packed);
+  return {...q,options:mixed.map(x=>x.text),answer:LETTERS[mixed.findIndex(x=>x.correct)]};
+}
+function signature(a){return a.map(x=>x.id).join('|')}
+function newRandomBank(){
+  const key='haucan_last_random_order_v1';
+  const prev=localStorage.getItem(key)||'';
+  let arr=[];
+  for(let t=0;t<20;t++){
+    arr=shuffle(ALL);
+    if(signature(arr)!==prev)break;
+  }
+  localStorage.setItem(key,signature(arr));
+  return arr.map(shuffleOptions);
+}
+function historyKey(type){return 'haucan_history_'+type+'_v1'}
+
+function renderHome(type){
+  if(type==='random'){
+    $('randomSec').innerHTML=homeHTML(type,'Đề ngẫu nhiên',ALL.length,'Toàn bộ câu hỏi của 3 phần được xáo trộn; thứ tự phương án A/B/C/D cũng được đảo ngẫu nhiên, không theo thứ tự trong file Word.');
+  }else{
+    const x=SECTION_MAP[type], count=DATA[x.key].length;
+    $(type+'Sec').innerHTML=homeHTML(type,x.name,count,'Giữ đúng câu hỏi, thứ tự câu và phương án theo phần tương ứng trong file Word. Đáp án đúng lấy từ phương án in màu đỏ.');
+  }
+  renderHistory(type);
+}
+function homeHTML(type,title,count,desc){
+  const random=type==='random';
+  return `<div id="${type}Home" class="bg-white rounded-xl border shadow-sm p-5">
+    <h2 class="font-black text-xl mb-1">${random?'🎲':'📘'} ${title}</h2>
+    <p class="text-xs sm:text-sm text-slate-500 mb-4">${desc}</p>
+    <button onclick="startTest('${type}')" class="w-full p-5 rounded-xl border-2 ${random?'border-indigo-400 bg-indigo-50 text-indigo-900':'border-emerald-400 bg-emerald-50 text-emerald-900'} font-black text-lg">
+      ${random?'🎲 TẠO ĐỀ NGẪU NHIÊN MỚI':'▶ BẮT ĐẦU LÀM '+count+' CÂU'}
+    </button>
+    <div class="mt-4 bg-slate-50 rounded-xl border p-4">
+      <div class="flex justify-between mb-2"><b class="text-sm">Lịch sử thi trên thiết bị</b><button onclick="clearHistory('${type}')" class="text-xs text-rose-600 font-bold">Xóa lịch sử</button></div>
+      <div id="${type}History" class="space-y-2 max-h-56 overflow-auto"></div>
+    </div>
+  </div>
+  <div id="${type}Active" class="hidden"></div>
+  <div id="${type}Result" class="hidden"></div>`;
+}
+
+function startTest(type){
+  let questions;
+  if(type==='random') questions=newRandomBank();
+  else questions=DATA[SECTION_MAP[type].key].map(q=>({...q,options:[...q.options]}));
+  state[type]={questions,index:0,answers:{},marked:{}};
+  $(type+'Home').classList.add('hidden');
+  $(type+'Result').classList.add('hidden');
+  $(type+'Active').classList.remove('hidden');
+  renderTest(type);
+}
+function renderQ(q,chosen,onAnswer){
+  let h=`<div class="flex justify-between items-center mb-4"><span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-black text-xs">${esc(q.section)} • Câu ${esc(q.label)}</span></div>
+  <div class="text-base sm:text-lg font-bold leading-relaxed text-slate-800 mb-4">${esc(q.q)}</div><div class="space-y-2.5">`;
+  q.options.forEach((o,i)=>{
+    const L=LETTERS[i], sel=chosen===L;
+    h+=`<button onclick="${onAnswer}('${L}')" class="opt w-full text-left p-3.5 rounded-xl border-2 flex gap-3 ${sel?'border-emerald-600 bg-emerald-50 text-emerald-900 ring-2 ring-emerald-500/20':'border-slate-200 bg-white hover:border-emerald-400'}"><span class="w-7 h-7 shrink-0 rounded-full border flex items-center justify-center font-bold text-xs">${L}</span><span class="text-sm sm:text-base">${esc(o)}</span></button>`;
+  });
+  return h+'</div>';
+}
+function renderTest(type){
+  const s=state[type],q=s.questions[s.index],total=s.questions.length;
+  $(type+'Active').innerHTML=`<div class="space-y-4">
+    <div class="sticky top-[140px] z-10 bg-white rounded-xl border shadow-sm p-3 flex justify-between items-center">
+      <div><b>${type==='random'?'Đề ngẫu nhiên':SECTION_MAP[type].name}</b><div class="text-xs text-slate-500">Đã làm: ${Object.keys(s.answers).length}/${total}</div></div>
+      <button onclick="submitTest('${type}')" class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold text-sm">Nộp bài</button>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div class="lg:col-span-3 space-y-4">
+        <div class="bg-white rounded-xl border shadow-sm p-4 sm:p-6">${renderQ(q,s.answers[s.index],`answerTest.bind(null,'${type}')`)}</div>
+        <div class="flex justify-between bg-white p-3 rounded-xl border">
+          <button onclick="moveTest('${type}',-1)" class="px-4 py-2 bg-slate-100 rounded-lg font-bold text-sm">← Câu trước</button>
+          <button onclick="markTest('${type}')" class="px-3 py-2 rounded-lg font-bold text-xs ${s.marked[s.index]?'bg-amber-500 text-white':'bg-amber-50 text-amber-800'}">🚩 Đánh dấu</button>
+          <button onclick="moveTest('${type}',1)" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-bold text-sm">Câu tiếp →</button>
+        </div>
+      </div>
+      <aside class="bg-white rounded-xl border shadow-sm p-4 h-fit">
+        <div class="font-bold text-sm mb-2">Danh sách câu hỏi</div>
+        <div class="grid grid-cols-5 gap-1.5 max-h-[450px] overflow-auto custom-scrollbar">
+          ${s.questions.map((x,i)=>`<button onclick="state['${type}'].index=${i};renderTest('${type}')" class="h-9 rounded-lg text-xs font-bold border ${i===s.index?'ring-2 ring-emerald-600 ':''}${s.marked[i]?'bg-amber-100 border-amber-400':s.answers[i]?'bg-emerald-600 text-white':'bg-slate-100'}">${i+1}</button>`).join('')}
+        </div>
+      </aside>
+    </div>
+  </div>`;
+}
+function answerTest(type,L){state[type].answers[state[type].index]=L;renderTest(type)}
+function moveTest(type,d){let s=state[type];s.index=Math.max(0,Math.min(s.questions.length-1,s.index+d));renderTest(type)}
+function markTest(type){let s=state[type];s.marked[s.index]=!s.marked[s.index];renderTest(type)}
+
+function reviewHTML(qs,answers){
+ return qs.map((q,i)=>`<div class="p-4 rounded-xl border ${answers[i]===q.answer?'bg-emerald-50 border-emerald-200':'bg-rose-50 border-rose-200'}">
+   <div class="font-bold mb-2">Câu ${i+1} • ${esc(q.section)} • Nguồn câu ${esc(q.label)} • ${answers[i]===q.answer?'✅ Đúng':'❌ Sai'}</div>
+   <div class="font-bold mb-2">${esc(q.q)}</div>
+   <div class="space-y-1 text-sm">${q.options.map((o,j)=>`<div class="${LETTERS[j]===q.answer?'font-bold text-emerald-800':''}">${LETTERS[j]}. ${esc(o)}</div>`).join('')}</div>
+   <div class="mt-2 text-sm"><b>Bạn chọn:</b> ${answers[i]||'Chưa chọn'} &nbsp; • &nbsp; <b>Đáp án:</b> ${q.answer}</div>
+ </div>`).join('');
+}
+function submitTest(type){
+  const s=state[type], total=s.questions.length;
+  if(!confirm(`Nộp bài? Đã làm ${Object.keys(s.answers).length}/${total} câu.`))return;
+  const correct=s.questions.filter((q,i)=>s.answers[i]===q.answer).length;
+  const percent=Math.round(correct/total*100);
+  saveHistory(type,correct,total,percent);
+  $(type+'Active').classList.add('hidden');
+  const r=$(type+'Result'); r.className='bg-white rounded-xl border shadow-sm p-6'; r.classList.remove('hidden');
+  r.innerHTML=`<div class="text-center border-b pb-5">
+      <div class="text-4xl">🏆</div><h2 class="font-black text-2xl">KẾT QUẢ</h2>
+      <div class="mt-3"><span class="text-3xl font-black text-emerald-600">${correct}/${total}</span><span class="ml-4 text-2xl font-black text-amber-500">${percent}%</span></div>
+    </div>
+    <div class="space-y-4 mt-5">${reviewHTML(s.questions,s.answers)}</div>
+    <div class="text-center mt-5"><button onclick="newTest('${type}')" class="px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold">${type==='random'?'🎲 Tạo đề ngẫu nhiên mới':'Làm lại đề'}</button></div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function newTest(type){
+  $(type+'Result').classList.add('hidden');
+  $(type+'Home').classList.remove('hidden');
+  startTest(type);
+}
+function saveHistory(type,score,total,percent){
+  const key=historyKey(type);
+  let h=JSON.parse(localStorage.getItem(key)||'[]');
+  h.unshift({date:new Date().toLocaleString('vi-VN'),score,total,percent});
+  localStorage.setItem(key,JSON.stringify(h.slice(0,50)));
+  renderHistory(type);
+}
+function renderHistory(type){
+  const el=$(type+'History'); if(!el)return;
+  const h=JSON.parse(localStorage.getItem(historyKey(type))||'[]');
+  el.innerHTML=h.length?h.map(x=>`<div class="bg-white border rounded-lg p-2 text-xs flex justify-between gap-2"><span>${x.date}</span><b class="text-emerald-700">${x.score}/${x.total} • ${x.percent}%</b></div>`).join(''):'<div class="text-xs text-slate-400">Chưa có lượt thi nào.</div>';
+}
+function clearHistory(type){
+  if(confirm('Xóa lịch sử của phần này?')){localStorage.removeItem(historyKey(type));renderHistory(type)}
+}
+function switchTab(type){
+  ['doanh','nhu','y','random'].forEach(x=>$(x+'Sec').classList.toggle('hidden',x!==type));
+  const tabs={doanh:'tabDoanh',nhu:'tabNhu',y:'tabY',random:'tabRandom'};
+  Object.entries(tabs).forEach(([k,id])=>$(id).className='tabbtn py-3 px-4 font-bold text-sm border-b-2 '+(k===type?'border-emerald-600 text-emerald-700':'border-transparent text-slate-500'));
+  renderHistory(type);
+}
+window.onload=()=>{
+  ['doanh','nhu','y','random'].forEach(renderHome);
+};
+</script>
+</body>
+</html>
