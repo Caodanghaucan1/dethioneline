@@ -114,20 +114,33 @@ function startTest(type){
   let questions;
   if(type==='random') questions=newRandomBank();
   else questions=DATA[SECTION_MAP[type].key].map(q=>({...q,options:[...q.options]}));
-  state[type]={questions,index:0,answers:{},marked:{}};
+  state[type]={questions,index:0,answers:{},marked:{},checked:{}};
   $(type+'Home').classList.add('hidden');
   $(type+'Result').classList.add('hidden');
   $(type+'Active').classList.remove('hidden');
   renderTest(type);
 }
-function renderQ(q,chosen,onAnswer){
+function renderQ(q,chosen,onAnswer,checked=false){
   let h=`<div class="flex justify-between items-center mb-4"><span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-black text-xs">${esc(q.section)} • Câu ${esc(q.label)}</span></div>
   <div class="text-base sm:text-lg font-bold leading-relaxed text-slate-800 mb-4">${esc(q.q)}</div><div class="space-y-2.5">`;
   q.options.forEach((o,i)=>{
     const L=LETTERS[i], sel=chosen===L;
-    h+=`<button onclick="${onAnswer}('${L}')" class="opt w-full text-left p-3.5 rounded-xl border-2 flex gap-3 ${sel?'border-emerald-600 bg-emerald-50 text-emerald-900 ring-2 ring-emerald-500/20':'border-slate-200 bg-white hover:border-emerald-400'}"><span class="w-7 h-7 shrink-0 rounded-full border flex items-center justify-center font-bold text-xs">${L}</span><span class="text-sm sm:text-base">${esc(o)}</span></button>`;
+    let cls=sel?'border-emerald-600 bg-emerald-50 text-emerald-900 ring-2 ring-emerald-500/20':'border-slate-200 bg-white hover:border-emerald-400';
+    if(checked){
+      if(L===q.answer) cls='border-emerald-600 bg-emerald-50 text-emerald-900 ring-2 ring-emerald-500/20 font-bold';
+      else if(sel) cls='border-rose-500 bg-rose-50 text-rose-900 ring-2 ring-rose-400/20 font-bold';
+      else cls='border-slate-200 bg-white text-slate-500';
+    }
+    h+=`<button ${checked?'disabled':''} onclick="${onAnswer}('${L}')" class="opt w-full text-left p-3.5 rounded-xl border-2 flex gap-3 ${cls}"><span class="w-7 h-7 shrink-0 rounded-full border flex items-center justify-center font-bold text-xs">${L}</span><span class="text-sm sm:text-base">${esc(o)}</span></button>`;
   });
-  return h+'</div>';
+  h+='</div>';
+  if(checked){
+    const ok=chosen===q.answer;
+    h+=`<div class="mt-4 p-3 rounded-xl border ${ok?'bg-emerald-50 border-emerald-200 text-emerald-800':'bg-rose-50 border-rose-200 text-rose-800'} font-bold text-sm">
+      ${ok?'✅ Chính xác':'❌ Chưa đúng'} • Đáp án đúng: <span class="text-base">${q.answer}</span>
+    </div>`;
+  }
+  return h;
 }
 function renderTest(type){
   const s=state[type],q=s.questions[s.index],total=s.questions.length;
@@ -138,23 +151,47 @@ function renderTest(type){
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <div class="lg:col-span-3 space-y-4">
-        <div class="bg-white rounded-xl border shadow-sm p-4 sm:p-6">${renderQ(q,s.answers[s.index],`answerTest.bind(null,'${type}')`)}</div>
+        <div class="bg-white rounded-xl border shadow-sm p-4 sm:p-6">${renderQ(q,s.answers[s.index],`answerTest.bind(null,'${type}')`,!!s.checked[s.index])}</div>
         <div class="flex justify-between bg-white p-3 rounded-xl border">
           <button onclick="moveTest('${type}',-1)" class="px-4 py-2 bg-slate-100 rounded-lg font-bold text-sm">← Câu trước</button>
-          <button onclick="markTest('${type}')" class="px-3 py-2 rounded-lg font-bold text-xs ${s.marked[s.index]?'bg-amber-500 text-white':'bg-amber-50 text-amber-800'}">🚩 Đánh dấu</button>
+          <div class="flex gap-2">
+            <button onclick="markTest('${type}')" class="px-3 py-2 rounded-lg font-bold text-xs ${s.marked[s.index]?'bg-amber-500 text-white':'bg-amber-50 text-amber-800'}">🚩 Đánh dấu</button>
+            ${type!=='random'?`<button onclick="checkAnswer('${type}')" class="px-3 py-2 rounded-lg font-bold text-xs ${s.checked[s.index]?'bg-blue-600 text-white':'bg-blue-50 text-blue-700 border border-blue-200'}">✅ Check đáp án</button>`:''}
+          </div>
           <button onclick="moveTest('${type}',1)" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-bold text-sm">Câu tiếp →</button>
         </div>
       </div>
       <aside class="bg-white rounded-xl border shadow-sm p-4 h-fit">
         <div class="font-bold text-sm mb-2">Danh sách câu hỏi</div>
         <div class="grid grid-cols-5 gap-1.5 max-h-[450px] overflow-auto custom-scrollbar">
-          ${s.questions.map((x,i)=>`<button onclick="state['${type}'].index=${i};renderTest('${type}')" class="h-9 rounded-lg text-xs font-bold border ${i===s.index?'ring-2 ring-emerald-600 ':''}${s.marked[i]?'bg-amber-100 border-amber-400':s.answers[i]?'bg-emerald-600 text-white':'bg-slate-100'}">${i+1}</button>`).join('')}
+          ${s.questions.map((x,i)=>{
+            let status='bg-slate-100';
+            if(s.checked[i]) status=s.answers[i]===x.answer?'bg-emerald-600 text-white border-emerald-600':'bg-rose-500 text-white border-rose-500';
+            else if(s.marked[i]) status='bg-amber-100 border-amber-400';
+            else if(s.answers[i]) status='bg-blue-500 text-white border-blue-500';
+            return `<button onclick="state['${type}'].index=${i};renderTest('${type}')" class="h-9 rounded-lg text-xs font-bold border ${i===s.index?'ring-2 ring-emerald-600 ':''}${status}">${i+1}</button>`;
+          }).join('')}
         </div>
       </aside>
     </div>
   </div>`;
 }
-function answerTest(type,L){state[type].answers[state[type].index]=L;renderTest(type)}
+function answerTest(type,L){
+  const s=state[type];
+  if(s.checked[s.index]) return;
+  s.answers[s.index]=L;
+  renderTest(type);
+}
+function checkAnswer(type){
+  if(type==='random') return;
+  const s=state[type];
+  if(!s.answers[s.index]){
+    alert('Bạn hãy chọn một đáp án trước khi kiểm tra.');
+    return;
+  }
+  s.checked[s.index]=true;
+  renderTest(type);
+}
 function moveTest(type,d){let s=state[type];s.index=Math.max(0,Math.min(s.questions.length-1,s.index+d));renderTest(type)}
 function markTest(type){let s=state[type];s.marked[s.index]=!s.marked[s.index];renderTest(type)}
 
